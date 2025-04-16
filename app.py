@@ -6,7 +6,9 @@ import uvicorn
 
 from api import (
     health_check,
-    ping
+    ping,
+    learn,
+    send_packet,
 )
 
 BASE_URL = "/api/"
@@ -14,6 +16,8 @@ BASE_URL = "/api/"
 routes = [
     Route(BASE_URL + "ping", ping, methods=["GET"]),
     Route(BASE_URL + "health-check", health_check, methods=["GET"]),
+    Route(BASE_URL + "learn", learn, methods=["GET"]),
+    Route(BASE_URL + "send-packet", send_packet, methods=["POST"]),    
 ]
 
 middleware = [
