@@ -5,6 +5,7 @@ FROM python:3.11-slim
 ENV DEVICE_NAME="uni-remote"
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DISCOVERY_TYPE="ip-address"
 
 # Set work directory
 WORKDIR /app

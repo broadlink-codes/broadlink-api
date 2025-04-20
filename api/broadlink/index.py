@@ -9,11 +9,11 @@ from starlette.status import (
 )
 from broadlink.remote import data_to_pulses, pulses_to_data
 
-from config import get_device, DEVICE_NAME, LEARN_TIMEOUT_SEC
+from config import get_device, LEARN_TIMEOUT_SEC
 
 async def learn(request):
     try:
-        device = get_device(DEVICE_NAME)
+        device = get_device()
 
         captured_packet = None
         device.enter_learning()
@@ -53,7 +53,7 @@ async def learn(request):
 
 async def send_packet(request):
     try:
-        device = get_device(DEVICE_NAME)
+        device = get_device()
 
         data = await request.json()
         packet = data.get("packet")

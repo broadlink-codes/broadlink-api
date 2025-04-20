@@ -19,25 +19,41 @@ def is_device_active(device: broadlink.rm4mini):
   except:
     return False
 
-def get_device(device_name)-> broadlink.rm4mini:
+DEVICE_NAME = __get_env("DEVICE_NAME")
+DEVICE_MAC = __get_env("DEVICE_MAC")
+DEVICE_IP = __get_env("DEVICE_IP")
+DEVICE_PORT = int(__get_env("DEVICE_PORT"))
+DEVICE_DEVTYPE = int(__get_env("DEVICE_DEVTYPE"))
+DISCOVERY_TYPE = __get_env("DISCOVERY_TYPE")
+
+def get_device()-> broadlink.rm4mini:
   global DEVICE
   if (not DEVICE) or (not is_device_active(DEVICE)):
-    all_devices = broadlink.discover()
-    for device in all_devices:
-      if device.name == device_name:
-        try:
-          device.auth()
+    if DISCOVERY_TYPE == "device-name":
+      all_devices = broadlink.discover()
+      for device in all_devices:
+        if device.name == DEVICE_NAME:
           DEVICE = device
-        except:
-          raise Exception(
-            "Unable to authenticate the device"
-          )
-    if not DEVICE:
+          break
+      if not DEVICE:
+        raise Exception(
+          f"Device with name {DEVICE_NAME} not found in active devices, please recheck the power. If running on docker use '--network host'"
+        )
+    else:
+      try:
+        DEVICE = broadlink.remote.rm4mini((DEVICE_IP, DEVICE_PORT), mac=bytearray.fromhex(DEVICE_MAC), devtype=DEVICE_DEVTYPE)
+      except Exception as e:
+        raise Exception(
+          f"Unable to get device with ip: {DEVICE_IP} error: {e}"
+        )
+
+    try:
+      DEVICE.auth()
+    except:
       raise Exception(
-        f"Device with name {device_name} not found in active devices, please recheck the power"
+        "Unable to authenticate the device"
       )
   return DEVICE
 
 
-DEVICE_NAME = __get_env("DEVICE_NAME")
 LEARN_TIMEOUT_SEC = 30
